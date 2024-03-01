@@ -1,8 +1,8 @@
-import {Component, ElementRef, Inject, ViewChild} from '@angular/core';
-import {DOCUMENT} from "@angular/common";
+import {Component} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
+// Formulaire
 @Component({
   selector: 'app-root',
   template: `
@@ -41,9 +41,13 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
   `,
   styleUrls: ['./app.component.css']
 })
+
+// Gestion des composants de la page
 export class AppComponent {
   myForm: FormGroup;
 
+  // Constructeur permettant de récupérer les valeurs des champs du formulaire
+  // Pour chaque champs, un pattern de validation a été mis en place avec le format regex
   constructor(private http: HttpClient, private formBuilder: FormBuilder) {
     this.myForm = this.formBuilder.group({
       last_name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z]+(?:[-\s'][a-zA-Z]+)*$/)]],
@@ -54,8 +58,9 @@ export class AppComponent {
     });
   }
 
+  // Fonction appelée à l'envoi du formulaire
   onClick(): void {
-
+    // Vérification du formulaire avant envoi des données
     if(this.myForm.valid){
       const formData = {
         last_name: this.myForm.value.last_name,
@@ -65,6 +70,7 @@ export class AppComponent {
         message: this.myForm.value.message
       };
 
+      // Envoi des données au backend du projet
       // @ts-ignore
       this.http.post('http://localhost:3000/send', formData)
         .subscribe(

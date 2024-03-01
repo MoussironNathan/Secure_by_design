@@ -9,6 +9,7 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 
+// Mise en place d'un limiteur de requête
 const rateLimiterUsingThirdParty = rateLimit({
     windowMs: 24 * 60 * 60 * 1000, // 24 hrs in milliseconds
     max: 3,
@@ -22,7 +23,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
+// Fonction pour tester l'intégrité des données
 function test_intregrity(last_name, first_name, email, phone, cleanedMessage) {
+
     const isValidLastName = (last_name) => {
         const lastNameRegex = /^[a-zA-Z]+(?:[-\s'][a-zA-Z]+)*$/;
         return lastNameRegex.test(last_name);
@@ -53,8 +56,10 @@ function test_intregrity(last_name, first_name, email, phone, cleanedMessage) {
 
 // Gestion de la soumission du formulaire
 app.post('/send', (req, res) => {
+    // Récupération des données
     const { last_name, first_name, email, phone, message } = req.body;
 
+    // Nettoyage du message afin d'éviter les failles XSS
     const cleanMessage = (message) => {
         return sanitizeHtml(message, {
             allowedTags: [],
